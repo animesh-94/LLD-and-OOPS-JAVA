@@ -1,56 +1,72 @@
 //example of Factory Design Pattern
 
-interface deliveryVehicle{
-    void delivery();
+interface ButtonFunctionService{
+    void render();
+    void onClick();
 }
 
-class Trucks implements deliveryVehicle{
+class WindowsButton implements ButtonFunctionService{
     @Override
-    public void delivery(){
-        System.out.println("Delivery is done via Truck");
+    public void onClick(){
+        System.out.println("Clicked the Windows button....Initializing the rendering.....");
+    }
+    @Override
+    public void render(){
+        System.out.println("Rendering the Windows interface");
     }
 }
 
-class Ships implements deliveryVehicle{
+class MacButton implements ButtonFunctionService{
     @Override
-    public void delivery(){
-        System.out.println("Delivery is done via Ships");
+    public void onClick(){
+        System.out.println("Clicked the Mac button....Initializing the rendering.....");
+    }
+    @Override
+    public void render(){
+        System.out.println("Rendering the Mac interface");
     }
 }
 
-class Aeroplane implements deliveryVehicle{
+class LinuxButton implements ButtonFunctionService{
     @Override
-    public void delivery(){
-        System.out.println("Delivery is done via Aeroplane");
+    public void onClick(){
+        System.out.println("Clicked the Linux button....Initializing the rendering.....");
+    }
+    @Override
+    public void render(){
+        System.out.println("Rendering the Linux interface");
     }
 }
 
-class FactoryMethod{
-    public static deliveryVehicle getVehicle(String vehicleType){
-        if(vehicleType.equals("Trucks")){
-            return new Trucks();
+class ButtonFactoryMethod{
+    public static ButtonFunctionService getButton(String button){
+        if(button.equals("Windows")){
+            return new WindowsButton();
         }
-        else if(vehicleType.equals("Ships")){
-            return new Ships();
+        else if(button.equals("Mac")){
+            return new MacButton();
         }
-        else if(vehicleType.equals("Aeroplane")){
-            return new Aeroplane();
+        else if(button.equals("Linux")){
+            return new LinuxButton();
         }
         else{
-            throw new IllegalArgumentException("Invalid delivery vehicle type");
+            throw new IllegalArgumentException("Invalid button input");
         }
     }
 }
 
 public class Main {
     public static void main(String[] args) {
-        deliveryVehicle vehicle1 = FactoryMethod.getVehicle("Trucks");
-        vehicle1.delivery();
+        ButtonFunctionService button1 = ButtonFactoryMethod.getButton("Windows");
+        button1.onClick();
+        button1.render();
         
-        deliveryVehicle vehicle2 = FactoryMethod.getVehicle("Ships");
-        vehicle2.delivery();
+        ButtonFunctionService button2 = ButtonFactoryMethod.getButton("Mac");
+        button2.onClick();
+        button2.render();
         
-        deliveryVehicle vehicle3 = FactoryMethod.getVehicle("Aeroplane");
-        vehicle3.delivery();
+        ButtonFunctionService button3 = ButtonFactoryMethod.getButton("Linux");
+        button3.onClick();
+        button3.render();
     }
 }
