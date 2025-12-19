@@ -1,132 +1,292 @@
-// House class represents the final immutable object
-class House {
+// Represents an immutable Cloud Server configuration
+class CloudServer {
 
-    // Mandatory attributes
-    private final int floors;
-    private final int area;
+    // Mandatory fields
+    private final String region;
+    private final int cpuCores;
+    private final int ramGB;
+    private final String osType;
 
-    // Optional attributes
-    private final boolean garage;
-    private final boolean swimmingPool;
-    private final boolean garden;
-    private final boolean securitySystem;
+    // Optional configuration fields
+    private final boolean gpuEnable;
+    private final String gpuType;
 
-    // Private constructor that takes Builder object
-    // This ensures House objects are created only via the Builder
-    House(HouseBuilder builder) {
-        this.floors = builder.floors;
-        this.area = builder.area;
-        this.garage = builder.garage;
-        this.swimmingPool = builder.swimmingPool;
-        this.garden = builder.garden;
-        this.securitySystem = builder.securitySystem;
+    private final boolean autoScalling;
+    private final int minInstance;
+    private final int maxInstance;
+
+    private final boolean loadBalancerEnabled;
+
+    private final boolean backupEnabled;
+    private final int backupFrequency;
+
+    private final String securityGroups;
+    private final boolean monitoringEnabled;
+
+    // Private constructor that accepts Builder instance
+    // Ensures object creation only via Builder
+    CloudServer(CloudBuilder builder) {
+        this.region = builder.region;
+        this.cpuCores = builder.cpuCores;
+        this.ramGB = builder.ramGB;
+        this.osType = builder.osType;
+        this.gpuEnable = builder.gpuEnable;
+        this.gpuType = builder.gpuType;
+        this.autoScalling = builder.autoScalling;
+        this.minInstance = builder.minInstance;
+        this.maxInstance = builder.maxInstance;
+        this.loadBalancerEnabled = builder.loadBalancerEnabled;
+        this.backupEnabled = builder.backupEnabled;
+        this.backupFrequency = builder.backupFrequency;
+        this.securityGroups = builder.securityGroups;
+        this.monitoringEnabled = builder.monitoringEnabled;
     }
 
-    // Getter methods (no setters to keep object immutable)
-    public int getFloor() {
-        return floors;
+    // Getter methods (no setters → immutability)
+    public String getRegion() {
+        return region;
     }
 
-    public int getArea() {
-        return area;
+    public int getCPUCores() {
+        return cpuCores;
     }
 
-    public boolean getGarage() {
-        return garage;
+    public int getRAMGB() {
+        return ramGB;
     }
 
-    public boolean getSwimmingPool() {
-        return swimmingPool;
+    public String getOSTYPE() {
+        return osType;
     }
 
-    public boolean getGarden() {
-        return garden;
+    public boolean getGPUEnabled() {
+        return gpuEnable;
     }
 
-    public boolean getSecuritySystem() {
-        return securitySystem;
+    public String getGPUType() {
+        return gpuType;
     }
 
-    // Overriding toString() for easy object representation
+    public boolean getAutoScalling() {
+        return autoScalling;
+    }
+
+    public int getMinInstance() {
+        return minInstance;
+    }
+
+    public int getMaxInstance() {
+        return maxInstance;
+    }
+
+    public boolean getLoadBalancerEnabled() {
+        return loadBalancerEnabled;
+    }
+
+    public boolean getBackupEnablled() {
+        return backupEnabled;
+    }
+
+    public int getBackupFrequency() {
+        return backupFrequency;
+    }
+
+    public String getSecurityGroups() {
+        return securityGroups;
+    }
+
+    public boolean GetMonitoringEnablled() {
+        return monitoringEnabled;
+    }
+
+    // Overriding toString() for easy debugging and logging
     @Override
     public String toString() {
-        return "House{" +
-                "floors=" + floors +
-                ", area=" + area +
-                ", garage=" + garage +
-                ", swimmingPool=" + swimmingPool +
-                ", garden=" + garden +
-                ", securitySystem=" + securitySystem +
+        return "CloudServer{" +
+                "region='" + region + '\'' +
+                ", cpuCores=" + cpuCores +
+                ", ramGB=" + ramGB +
+                ", osType='" + osType + '\'' +
+                ", gpuEnable=" + gpuEnable +
+                ", gpuType='" + gpuType + '\'' +
+                ", autoScalling=" + autoScalling +
+                ", minInstance=" + minInstance +
+                ", maxInstance=" + maxInstance +
+                ", loadBalancerEnabled=" + loadBalancerEnabled +
+                ", backupEnabled=" + backupEnabled +
+                ", backupFrequency=" + backupFrequency +
+                ", securityGroups='" + securityGroups + '\'' +
+                ", monitoringEnabled=" + monitoringEnabled +
                 '}';
     }
 
-    // Static nested Builder class
-    public static class HouseBuilder {
+    // ---------------- BUILDER CLASS ----------------
+    public static class CloudBuilder {
 
-        // Required parameters
-        private final int floors;
-        private final int area;
+        // Mandatory fields (required to create a server)
+        private final String region;
+        private final int cpuCores;
+        private final int ramGB;
+        private final String osType;
 
-        // Optional parameters with default values
-        private boolean garage = false;
-        private boolean swimmingPool = false;
-        private boolean garden = false;
-        private boolean securitySystem = false;
+        // Optional fields with default values
+        private boolean gpuEnable;
+        private String gpuType;
 
-        // Builder constructor enforces mandatory fields
-        public HouseBuilder(int floors, int area) {
-            if (floors <= 0) {
-                throw new IllegalArgumentException("Invalid floor");
+        private boolean autoScalling;
+        private int minInstance = 1;
+        private int maxInstance = 1;
+
+        private boolean loadBalancerEnabled;
+
+        private boolean backupEnabled;
+        private int backupFrequency;
+
+        private String securityGroups;
+        private boolean monitoringEnabled;
+
+        // Constructor enforces mandatory fields
+        public CloudBuilder(String region, int cpuCores, int ramGB, String osType) {
+
+            // Validation of required parameters
+            if (region == null || region.isEmpty()) {
+                throw new IllegalArgumentException("Invalid region");
             }
-            if (area <= 0) {
-                throw new IllegalArgumentException("Invalid area");
+            if (cpuCores <= 0) {
+                throw new IllegalArgumentException("Invalid CPU core numbers");
             }
-            this.floors = floors;
-            this.area = area;
+            if (ramGB <= 0) {
+                throw new IllegalArgumentException("Invalid RAM");
+            }
+            if (osType == null || osType.isEmpty()) {
+                throw new IllegalArgumentException("OS type is Invalid");
+            }
+
+            this.region = region;
+            this.cpuCores = cpuCores;
+            this.ramGB = ramGB;
+            this.osType = osType;
         }
 
-        // Setter methods for optional parameters
-        // Each method returns Builder to enable method chaining
-        public HouseBuilder setGarage(boolean garage) {
-            this.garage = garage;
+        // Fluent setter methods for optional configuration
+        public CloudBuilder setGPUEnabled(boolean gpuEnable) {
+            this.gpuEnable = gpuEnable;
             return this;
         }
 
-        public HouseBuilder setSwimmingPool(boolean swimmingPool) {
-            this.swimmingPool = swimmingPool;
+        public CloudBuilder setGPUType(String gpuType) {
+            this.gpuType = gpuType;
             return this;
         }
 
-        public HouseBuilder setGarden(boolean garden) {
-            this.garden = garden;
+        public CloudBuilder setAutoScalling(boolean autoScalling) {
+            this.autoScalling = autoScalling;
             return this;
         }
 
-        public HouseBuilder setSecuritySystem(boolean securitySystem) {
-            this.securitySystem = securitySystem;
+        public CloudBuilder setMinInstance(int minInstance) {
+            this.minInstance = minInstance;
             return this;
         }
 
-        // Final build method to create immutable House object
-        public House build() {
-            return new House(this);
+        public CloudBuilder setMaxInstance(int maxInstance) {
+            this.maxInstance = maxInstance;
+            return this;
+        }
+
+        public CloudBuilder setLoadBalancer(boolean loadBalancerEnabled) {
+            this.loadBalancerEnabled = loadBalancerEnabled;
+            return this;
+        }
+
+        public CloudBuilder setBackupEnable(boolean backupEnabled) {
+            this.backupEnabled = backupEnabled;
+            return this;
+        }
+
+        public CloudBuilder setBackFrequency(int backupFrequency) {
+            this.backupFrequency = backupFrequency;
+            return this;
+        }
+
+        public CloudBuilder setSecurityGroups(String securityGroups) {
+            this.securityGroups = securityGroups;
+            return this;
+        }
+
+        public CloudBuilder setMonitoringEnabled(boolean monitoringEnabled) {
+            this.monitoringEnabled = monitoringEnabled;
+            return this;
+        }
+
+        // Centralized validation before object creation
+        public CloudServer build() {
+
+            // GPU constraint validation
+            if (gpuEnable && (gpuType == null || gpuType.isEmpty())) {
+                throw new IllegalArgumentException(
+                        "GPU type must be specified when GPU is enabled");
+            }
+
+            // Auto-scaling validation
+            if (autoScalling) {
+                if (minInstance < 1 || maxInstance < minInstance) {
+                    throw new IllegalArgumentException(
+                            "Auto Scalling can't be implemented");
+                }
+            }
+
+            // Backup validation
+            if (backupEnabled && backupFrequency <= 0) {
+                throw new IllegalArgumentException(
+                        "Backup Frequency should be greater than 0");
+            }
+
+            // Create immutable CloudServer object
+            return new CloudServer(this);
         }
     }
 }
 
-// Main class to demonstrate Builder Pattern usage
+// ---------------- MAIN CLASS ----------------
 public class Main {
     public static void main(String[] args) {
 
-        // Creating House object using Builder pattern
-        House house = new House.HouseBuilder(2, 2000)
-                .setGarage(true)
-                .setSwimmingPool(true)
-                .setGarden(false)
-                .setSecuritySystem(true)
-                .build();
+        // ✅ Valid CloudServer configuration using Builder
+        CloudServer server = new CloudServer.CloudBuilder(
+                "ap-south-1",   // region
+                8,              // CPU cores
+                32,             // RAM in GB
+                "Linux"         // OS type
+        )
+        .setGPUEnabled(true)
+        .setGPUType("NVIDIA A100")
+        .setAutoScalling(true)
+        .setMinInstance(2)
+        .setMaxInstance(10)
+        .setLoadBalancer(true)
+        .setBackupEnable(true)
+        .setBackFrequency(24)           // Backup every 24 hours
+        .setSecurityGroups("ssh,http,https")
+        .setMonitoringEnabled(true)
+        .build();
 
-        // Printing house details
-        System.out.println(house);
+        // Print final server configuration
+        System.out.println(server);
+
+        // ❌ Invalid configuration example (GPU enabled but type missing)
+        try {
+            CloudServer invalidServer = new CloudServer.CloudBuilder(
+                    "us-east-1",
+                    4,
+                    16,
+                    "Ubuntu"
+            )
+            .setGPUEnabled(true)   // GPU enabled
+            // GPU type not set → validation failure
+            .build();
+        } catch (IllegalArgumentException e) {
+            System.out.println("Error creating server: " + e.getMessage());
+        }
     }
 }
