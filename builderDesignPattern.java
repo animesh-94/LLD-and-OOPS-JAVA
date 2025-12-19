@@ -1,129 +1,132 @@
-// Car class represents the product that we want to build
-class Car {
-    
-    // Mandatory / optional attributes of Car
-    private String engine;
-    private int wheels;
-    private String color;
-    private int seat;
-    private boolean sunroof;
-    private boolean infoScreen;
+// House class represents the final immutable object
+class House {
+
+    // Mandatory attributes
+    private final int floors;
+    private final int area;
+
+    // Optional attributes
+    private final boolean garage;
+    private final boolean swimmingPool;
+    private final boolean garden;
+    private final boolean securitySystem;
 
     // Private constructor that takes Builder object
-    // This ensures Car objects are created only using CarBuilder
-    Car(CarBuilder builder) {
-        this.engine = builder.engine;
-        this.wheels = builder.wheels;
-        this.color = builder.color;
-        this.seat = builder.seat;
-        this.sunroof = builder.sunroof;
-        this.infoScreen = builder.infoScreen;
+    // This ensures House objects are created only via the Builder
+    House(HouseBuilder builder) {
+        this.floors = builder.floors;
+        this.area = builder.area;
+        this.garage = builder.garage;
+        this.swimmingPool = builder.swimmingPool;
+        this.garden = builder.garden;
+        this.securitySystem = builder.securitySystem;
     }
 
-    // Getter methods
-    public String GetEngine() {
-        return engine;
+    // Getter methods (no setters to keep object immutable)
+    public int getFloor() {
+        return floors;
     }
 
-    public int GetWheels() {
-        return wheels;
+    public int getArea() {
+        return area;
     }
 
-    public String GetColor() {
-        return color;
+    public boolean getGarage() {
+        return garage;
     }
 
-    public int GetSeat() {
-        return seat;
+    public boolean getSwimmingPool() {
+        return swimmingPool;
     }
 
-    public boolean GetSunroof() {
-        return sunroof;
+    public boolean getGarden() {
+        return garden;
     }
 
-    public boolean GetInfoScreen() {
-        return infoScreen;
+    public boolean getSecuritySystem() {
+        return securitySystem;
     }
 
-    // Overriding toString() to print Car object details
+    // Overriding toString() for easy object representation
     @Override
     public String toString() {
-        return "Car [engine=" + engine + ", wheels=" + wheels + ", seats=" + seat
-                + ", color=" + color + ", sunroof=" + sunroof
-                + ", infoScreen=" + infoScreen + "]";
+        return "House{" +
+                "floors=" + floors +
+                ", area=" + area +
+                ", garage=" + garage +
+                ", swimmingPool=" + swimmingPool +
+                ", garden=" + garden +
+                ", securitySystem=" + securitySystem +
+                '}';
     }
 
-    // Static inner Builder class
-    // Responsible for step-by-step construction of Car object
-    public static class CarBuilder {
+    // Static nested Builder class
+    public static class HouseBuilder {
 
-        // Same fields as Car
-        private String engine;
-        private int wheels = 4;        // Default value
-        private String color = "RED";  // Default value
-        private int seat = 5;          // Default value
-        private boolean sunroof = false;
-        private boolean infoScreen = false;
+        // Required parameters
+        private final int floors;
+        private final int area;
 
-        // Setter methods return the same Builder object
-        // This enables method chaining
-        public CarBuilder setEngine(String engine) {
-            this.engine = engine;
+        // Optional parameters with default values
+        private boolean garage = false;
+        private boolean swimmingPool = false;
+        private boolean garden = false;
+        private boolean securitySystem = false;
+
+        // Builder constructor enforces mandatory fields
+        public HouseBuilder(int floors, int area) {
+            if (floors <= 0) {
+                throw new IllegalArgumentException("Invalid floor");
+            }
+            if (area <= 0) {
+                throw new IllegalArgumentException("Invalid area");
+            }
+            this.floors = floors;
+            this.area = area;
+        }
+
+        // Setter methods for optional parameters
+        // Each method returns Builder to enable method chaining
+        public HouseBuilder setGarage(boolean garage) {
+            this.garage = garage;
             return this;
         }
 
-        public CarBuilder setWheel(int wheels) {
-            this.wheels = wheels;
+        public HouseBuilder setSwimmingPool(boolean swimmingPool) {
+            this.swimmingPool = swimmingPool;
             return this;
         }
 
-        public CarBuilder setColor(String color) {
-            this.color = color;
+        public HouseBuilder setGarden(boolean garden) {
+            this.garden = garden;
             return this;
         }
 
-        public CarBuilder setSeat(int seat) {
-            this.seat = seat;
+        public HouseBuilder setSecuritySystem(boolean securitySystem) {
+            this.securitySystem = securitySystem;
             return this;
         }
 
-        public CarBuilder setSunroof(boolean sunroof) {
-            this.sunroof = sunroof;
-            return this;
-        }
-
-        public CarBuilder setInfoScreen(boolean infoScreen) {
-            this.infoScreen = infoScreen;
-            return this;
-        }
-
-        // Final method to create Car object
-        public Car build() {
-            return new Car(this);
+        // Final build method to create immutable House object
+        public House build() {
+            return new House(this);
         }
     }
 }
 
-// Main class to test Builder Pattern
+// Main class to demonstrate Builder Pattern usage
 public class Main {
     public static void main(String[] args) {
 
-        // Create a Builder object
-        Car.CarBuilder builder = new Car.CarBuilder();
+        // Creating House object using Builder pattern
+        House house = new House.HouseBuilder(2, 2000)
+                .setGarage(true)
+                .setSwimmingPool(true)
+                .setGarden(false)
+                .setSecuritySystem(true)
+                .build();
 
-        // Build first car with selected features
-        Car car1 = builder.setEngine("V8")
-                           .setColor("Red")
-                           .setSeat(5)
-                           .setSunroof(true)
-                           .build();
-        System.out.println(car1);
-
-        // Build second car with different configuration
-        Car car2 = builder.setEngine("V6")
-                           .setColor("Blue")
-                           .setSeat(4)
-                           .build();
-        System.out.println(car2);
+        // Printing house details
+        System.out.println(house);
     }
 }
