@@ -1,85 +1,67 @@
 // Strategy Interface
-// Defines a common contract for all payment methods
-interface PaymentStrategy {
-    void payment();
+interface DiscountStrategy {
+    void discountProcess(int amount);
 }
 
 // Concrete Strategy 1
-// Implements payment using Credit Card
-class CreditCardPayment implements PaymentStrategy {
+class RegularCustomer implements DiscountStrategy {
     @Override
-    public void payment() {
-        System.out.println("Payment is done via Credit Card..");
+    public void discountProcess(int amount) {
+        int discount = (amount * 5) / 100;
+        System.out.println("Discount offered to Regular Customer: " + discount);
     }
 }
 
 // Concrete Strategy 2
-// Implements payment using UPI
-class UPIPayment implements PaymentStrategy {
+class PremiumCustomer implements DiscountStrategy {
     @Override
-    public void payment() {
-        System.out.println("Payment is done via UPI payment interface..");
+    public void discountProcess(int amount) {
+        int discount = (amount * 20) / 100;
+        System.out.println("Discount offered to Premium Customer: " + discount);
     }
 }
 
 // Concrete Strategy 3
-// Implements payment using Bitcoin
-class BitCoinPayment implements PaymentStrategy {
+class FestiveSeason implements DiscountStrategy {
     @Override
-    public void payment() {
-        System.out.println("Payment is done via BitCoin..");
-    }
-}
-
-// Concrete Strategy 4
-// Implements payment using Stripe
-class StripePayment implements PaymentStrategy {
-    @Override
-    public void payment() {
-        System.out.println("Payment is done via Stripe Interface....");
+    public void discountProcess(int amount) {
+        int discount = 500; // flat festive discount
+        System.out.println("Festive Season Discount: " + discount);
     }
 }
 
 // Context Class
-// Uses a PaymentStrategy to perform payment
-// The strategy can be changed at runtime
-class PaymentProcessor {
+class DiscountProcessor {
 
-    // Reference to the strategy interface
-    private PaymentStrategy paymentStrategy;
+    private DiscountStrategy discountStrategy;
 
-    // Constructor injection of strategy
-    public PaymentProcessor(PaymentStrategy paymentStrategy) {
-        this.paymentStrategy = paymentStrategy;
+    public DiscountProcessor(DiscountStrategy discountStrategy) {
+        this.discountStrategy = discountStrategy;
     }
 
-    // Executes the payment using the current strategy
-    public void processPayment() {
-        paymentStrategy.payment();
+    public void processDiscount(int amount) {
+        discountStrategy.discountProcess(amount);
     }
 
-    // Allows changing the strategy dynamically at runtime
-    public void setPaymentStrategy(PaymentStrategy paymentStrategy) {
-        this.paymentStrategy = paymentStrategy;
+    public void setDiscountStrategy(DiscountStrategy discountStrategy) {
+        this.discountStrategy = discountStrategy;
     }
 }
 
 // Client Code
-// Demonstrates how different strategies are selected and used
 public class Main {
     public static void main(String[] args) {
 
-        // Using Credit Card payment strategy
-        PaymentProcessor processor =
-                new PaymentProcessor(new CreditCardPayment());
-        processor.processPayment();
+        int billAmount = 5000;
 
-        // Switching strategy to UPI at runtime
-        processor.setPaymentStrategy(new UPIPayment());
-        processor.processPayment();
+        DiscountProcessor processor =
+                new DiscountProcessor(new RegularCustomer());
+        processor.processDiscount(billAmount);
 
-        // Switching strategy to Bitcoin at runtime
-        processor.setPaymentStrategy(new BitCoinPayment());
-        processor.processPayment();
+        processor.setDiscountStrategy(new PremiumCustomer());
+        processor.processDiscount(billAmount);
+
+        processor.setDiscountStrategy(new FestiveSeason());
+        processor.processDiscount(billAmount);
     }
 }
