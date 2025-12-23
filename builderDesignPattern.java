@@ -1,3 +1,70 @@
+Problem Statement
+
+Modern cloud platforms (AWS, Azure, GCP) allow users to configure servers with many optional 
+features such as GPU, auto-scaling, backups, monitoring, and load balancers.
+    
+Design a Cloud Server Configuration System that:
+Functional Requirements
+Supports mandatory parameters
+Region
+CPU cores
+RAM size
+Operating system
+Supports multiple optional configurations
+GPU (with type)
+Auto-scaling (min/max instances)
+Load balancer
+Backup (with frequency)
+Security groups
+Monitoring
+
+Ensures immutability once the server is created
+Performs centralized validation before object creation
+Prevents creation of invalid server configurations
+    
+Design Constraints
+Object creation must be readable and flexible
+Constructor explosion must be avoided
+Client code should be simple and expressive
+
+UML design
++----------------------+
+|     CloudServer      |
++----------------------+
+| - region             |
+| - cpuCores           |
+| - ramGB              |
+| - osType             |
+| - gpuEnable          |
+| - gpuType            |
+| - autoScalling       |
+| - minInstance        |
+| - maxInstance        |
+| - loadBalancer       |
+| - backupEnabled      |
+| - backupFrequency    |
+| - securityGroups     |
+| - monitoringEnabled  |
++----------------------+
+| + getters()          |
+| + toString()         |
++----------^-----------+
+           |
+           |
++----------------------+
+|    CloudBuilder      |
++----------------------+
+| - region             |
+| - cpuCores           |
+| - ramGB              |
+| - osType             |
+| - optional fields    |
++----------------------+
+| + setX()             |
+| + build()            |
++----------------------+
+
+
 // Represents an immutable Cloud Server configuration
 class CloudServer {
 
