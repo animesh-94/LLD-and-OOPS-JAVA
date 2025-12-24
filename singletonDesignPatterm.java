@@ -1,3 +1,55 @@
+Problem Statement:
+
+In many applications, logging is a cross-cutting concern used across multiple components.
+Creating multiple logger instances can lead to:
+Inconsistent logs
+Resource wastage
+Synchronization issues in multi-threaded environments
+
+✅ Requirement
+Ensure only one Logger instance exists throughout the application
+Provide global access
+Make it thread-safe
+Avoid unnecessary synchronization overhead
+
+Solution:
+
+Singleton Design Pattern
+Ensures a class has only one instance and provides a global point of access to it.
+
+UML:
+
++--------------------+
+|      Logger        |
++--------------------+
+| - instance: Logger |
+|   (static, volatile)|
++--------------------+
+| - Logger()         |
+|   (private)        |
++--------------------+
+| + getInstance():   |
+|   Logger (static)  |
+| + log(message):    |
+|   void             |
++--------------------+
+
+          ▲
+          |
+          |
++--------------------+
+|   Application      |
++--------------------+
+| + run(): void      |
++--------------------+
+
++--------------------+
+|      Main          |
++--------------------+
+| + main(args): void |
++--------------------+
+
+
 public class Logger {
 
     // Volatile ensures visibility across threads
