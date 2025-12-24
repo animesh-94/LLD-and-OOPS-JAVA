@@ -1,155 +1,255 @@
-Design a TV Remote Control System where:
+Design a Smart Home Automation System where a central controller 
+can operate multiple home devices such as Lights, Fan, and AC.
 
-The remote control should be able to perform different actions like:
-Turn ON / OFF the TV
-Change volume
-Change channel
-The remote should not be tightly coupled to the TV’s internal implementation
+The system must:
+Decouple the controller from device implementations
+Treat each user action as an object
+Support Macro Commands (e.g., Good Morning, Good Night)
+Support Undo of the last executed command
+Follow SOLID principles and clean LLD practices
 
-New commands (Mute, HDMI switch, Screenshot, etc.) should be added without modifying the remote
+Constraints:
+The controller should not directly call device methods
+New devices or commands should be addable without modifying existing code
+Macro commands should behave like normal commands
 
-Actions should be encapsulated as objects
-This problem demonstrates how to decouple the invoker (Remote) from the 
-receiver (TV) using the Command Design Pattern.
+┌──────────────┐
+│     User     │
+└──────┬───────┘
+       │ Press Button
+       ▼
+┌──────────────────┐
+│   Controller     │  (Invoker)
+│ (Remote / App)   │
+└──────┬───────────┘
+       │ execute()
+       ▼
+┌──────────────────┐
+│     Command      │  (Interface)
+│  execute / undo  │
+└──────┬───────────┘
+       │
+       │ (If Single Command)
+       │
+       ▼
+┌──────────────────┐
+│ ConcreteCommand  │
+│ (LightOn, FanOn) │
+└──────┬───────────┘
+       │ delegates
+       ▼
+┌──────────────────┐
+│      Home        │  (Receiver)
+│ (Lights, Fan, AC)│
+└──────────────────┘
 
 
+import java.util.*;
 
-// ===================== COMMAND INTERFACE =====================
-// Declares a common interface for all commands
+// ===================== COMMAND =====================
 interface Command {
-    void action();
+    void execute();
+    void undo();
+}
+
+// ===================== RECEIVER =====================
+class Home {
+
+    public void lightOn() {
+        System.out.println("Lights ON");
+    }
+
+    public void lightOff() {
+        System.out.println("Lights OFF");
+    }
+
+    public void fanOn() {
+        System.out.println("Fan ON");
+    }
+
+    public void fanOff() {
+        System.out.println("Fan OFF");
+    }
+
+    public void acOn() {
+        System.out.println("AC ON");
+    }
+
+    public void acOff() {
+        System.out.println("AC OFF");
+    }
 }
 
 // ===================== CONCRETE COMMANDS =====================
-// Concrete Command to turn ON the TV
-class TurnOnCommand implements Command {
-    private Tv tv;
+class LightOn implements Command {
+    private Home home;
 
-    public TurnOnCommand(Tv tv) {
-        this.tv = tv;
+    public LightOn(Home home) {
+        this.home = home;
     }
 
-    @Override
-    public void action() {
-        tv.turnOn();
-    }
-}
-
-// Concrete Command to turn OFF the TV
-class TurnOffCommand implements Command {
-    private Tv tv;
-
-    public TurnOffCommand(Tv tv) {
-        this.tv = tv;
+    public void execute() {
+        home.lightOn();
     }
 
-    @Override
-    public void action() {
-        tv.turnOff();
+    public void undo() {
+        home.lightOff();
     }
 }
 
-// Concrete Command to adjust TV volume
-class VolumeButton implements Command {
-    private Tv tv;
-    private int volume;
+class LightOff implements Command {
+    private Home home;
 
-    public VolumeButton(Tv tv, int volume) {
-        this.tv = tv;
-        this.volume = volume;
+    public LightOff(Home home) {
+        this.home = home;
     }
 
-    @Override
-    public void action() {
-        tv.adjustVolume(volume);
+    public void execute() {
+        home.lightOff();
+    }
+
+    public void undo() {
+        home.lightOn();
     }
 }
 
-// Concrete Command to change TV channel
-class ChannelButton implements Command {
-    private Tv tv;
-    private int channel;
+class FanOn implements Command {
+    private Home home;
 
-    public ChannelButton(Tv tv, int channel) {
-        this.tv = tv;
-        this.channel = channel;
+    public FanOn(Home home) {
+        this.home = home;
     }
 
-    @Override
-    public void action() {
-        tv.adjustChannel(channel);
+    public void execute() {
+        home.fanOn();
+    }
+
+    public void undo() {
+        home.fanOff();
+    }
+}
+
+class FanOff implements Command {
+    private Home home;
+
+    public FanOff(Home home) {
+        this.home = home;
+    }
+
+    public void execute() {
+        home.fanOff();
+    }
+
+    public void undo() {
+        home.fanOn();
+    }
+}
+
+class AcOn implements Command {
+    private Home home;
+
+    public AcOn(Home home) {
+        this.home = home;
+    }
+
+    public void execute() {
+        home.acOn();
+    }
+
+    public void undo() {
+        home.acOff();
+    }
+}
+
+class AcOff implements Command {
+    private Home home;
+
+    public AcOff(Home home) {
+        this.home = home;
+    }
+
+    public void execute() {
+        home.acOff();
+    }
+
+    public void undo() {
+        home.acOn();
+    }
+}
+
+// ===================== MACRO COMMAND =====================
+class MacroCommand implements Command {
+    private List<Command> commands;
+
+    public MacroCommand(List<Command> commands) {
+        this.commands = commands;
+    }
+
+    public void execute() {
+        for (Command command : commands) {
+            command.execute();
+        }
+    }
+
+    public void undo() {
+        for (int i = commands.size() - 1; i >= 0; i--) {
+            commands.get(i).undo();
+        }
     }
 }
 
 // ===================== INVOKER =====================
-// RemoteControl triggers commands without knowing their implementation
-class RemoteControl {
-    private Command onCommand;
-    private Command offCommand;
+class Controller {
+    private Stack<Command> history = new Stack<>();
 
-    public void setOnCommand(Command onCommand) {
-        this.onCommand = onCommand;
+    public void press(Command command) {
+        command.execute();
+        history.push(command);
     }
 
-    public void setOffCommand(Command offCommand) {
-        this.offCommand = offCommand;
-    }
-
-    public void pressOnButton() {
-        onCommand.action();
-    }
-
-    public void pressOffButton() {
-        offCommand.action();
-    }
-}
-
-// ===================== RECEIVER =====================
-// TV knows how to perform the actual operations
-class Tv {
-
-    public void turnOn() {
-        System.out.println("Television is turned ON");
-    }
-
-    public void turnOff() {
-        System.out.println("Television is turned OFF");
-    }
-
-    public void adjustVolume(int volume) {
-        System.out.println("Volume changed to: " + volume);
-    }
-
-    public void adjustChannel(int channel) {
-        System.out.println("Channel changed to: " + channel);
+    public void undo() {
+        if (!history.isEmpty()) {
+            history.pop().undo();
+        }
     }
 }
 
 // ===================== CLIENT =====================
 public class Main {
-
     public static void main(String[] args) {
 
-        // Receiver
-        Tv tv = new Tv();
+        Home home = new Home();
 
-        // Commands
-        Command turnOn = new TurnOnCommand(tv);
-        Command turnOff = new TurnOffCommand(tv);
-        Command volumeUp = new VolumeButton(tv, 69);
-        Command changeChannel = new ChannelButton(tv, 70);
+        // Individual commands
+        Command lightOn = new LightOn(home);
+        Command fanOff = new FanOff(home);
+        Command acOff = new AcOff(home);
 
-        // Invoker
-        RemoteControl remote = new RemoteControl();
+        // Macro Commands
+        Command goodMorning = new MacroCommand(
+                Arrays.asList(lightOn, fanOff, acOff)
+        );
 
-        // Client configures commands
-        remote.setOnCommand(turnOn);
-        remote.pressOnButton();
+        Command goodNight = new MacroCommand(
+                Arrays.asList(
+                        new LightOff(home),
+                        new FanOn(home),
+                        new AcOn(home)
+                )
+        );
 
-        changeChannel.action();
-        volumeUp.action();
+        Controller controller = new Controller();
 
-        remote.setOffCommand(turnOff);
-        remote.pressOffButton();
+        System.out.println("=== Good Morning Mode ===");
+        controller.press(goodMorning);
+
+        System.out.println("\nUndo Good Morning");
+        controller.undo();
+
+        System.out.println("\n=== Good Night Mode ===");
+        controller.press(goodNight);
+
+        System.out.println("\nUndo Good Night");
+        controller.undo();
     }
 }
