@@ -1,3 +1,52 @@
+Problem
+
+Design a vehicle manufacturing system where:
+The system should support multiple brands (Honda, BMW, Toyota).
+Each brand must produce a family of related vehicles (Sedan and SUV).
+The client code must not depend on concrete vehicle classes.
+Adding a new brand should not require changing client logic.
+
+Solution
+Use the Abstract Factory Design Pattern to:
+Define an interface for creating families of related objects.
+Allow the client to work with factory and product abstractions.
+Ensure brand consistency (vehicles from the same family).
+
+UML Diagram
+
+                    <<interface>>
+                       Vehicle
+                   ----------------
+                   + start()
+                   + stop()
+                        ▲
+        ------------------------------------------------
+        |                 |               |            |
+      Civic             City           BMWX1         BMWX5
+    (Honda)           (Honda)           (BMW)          (BMW)
+        |                                 |
+     Corolla                           Camry
+    (Toyota)                         (Toyota)
+
+
+                <<interface>>
+                VehicleFactory
+               -----------------
+               + createSedan()
+               + createSUV()
+                        ▲
+        -----------------------------------------
+        |                |                      |
+   HondaFactory       BMWFactory          ToyotaFactory
+   -------------      -----------          --------------
+   + createSedan()    + createSedan()      + createSedan()
+   + createSUV()      + createSUV()        + createSUV()
+
+
+Client (Main) --> VehicleFactory
+Client (Main) --> Vehicle
+
+
 // ===== ABSTRACT FACTORY DESIGN PATTERN =====
 
 // -------- Product Interface --------
