@@ -1,3 +1,66 @@
+Design an Online Food Delivery System with the following requirements:
+
+Functional Requirements
+Users can place food orders.
+Multiple payment methods are supported (UPI, Card, Wallet).
+Users receive real-time updates on order status.
+Restaurants and delivery partners are notified when order status changes.
+New payment methods should be added without modifying existing code.
+
+Design Constraints
+Payment logic must be decoupled from order processing.
+Notification system should support multiple observers.
+
+                    +----------------------+
+                    |   PaymentStrategy    |
+                    +----------------------+
+                    | + pay(amount): void  |
+                    +----------------------+
+                       ▲        ▲        ▲
+                       |        |        |
+        +---------------+  +-------------+  +---------------+
+        |  UPIPayment   |  | CardPayment |  | WalletPayment |
+        +---------------+  +-------------+  +---------------+
+
+                    +----------------------+
+                    |    PaymentFactory    |
+                    +----------------------+
+                    | + getPaymentMethod() |
+                    +----------------------+
+
+------------------------------------------------------------
+
+                    +----------------------+
+                    |   OrderObserver      |
+                    +----------------------+
+                    | + update(id,status) |
+                    +----------------------+
+                       ▲        ▲        ▲
+                       |        |        |
+              +---------+   +---------+   +----------------+
+              |  User   |   |Restaurant|  | DeliveryPartner |
+              +---------+   +---------+   +----------------+
+
+                    +----------------------+
+                    |     OrderSubject     |
+                    +----------------------+
+                    | + addObserver()      |
+                    | + removeObserver()   |
+                    | + notifyObservers()  |
+                    +----------------------+
+                             ▲
+                             |
+                    +----------------------+
+                    |        Order         |
+                    +----------------------+
+                    | - orderId            |
+                    | - status             |
+                    | - observers          |
+                    +----------------------+
+                    | + updateStatus()     |
+                    +----------------------+
+
+
 import java.util.*;
 
 // ================= STRATEGY PATTERN =================
