@@ -1,3 +1,42 @@
+                    <<interface>>
+                 SortingStrategy
+              -----------------------
+              + sortProcess(int[])
+                         ▲
+        ┌────────────────┼─────────────────┐
+        │                │                 │
+ ┌──────────────┐  ┌──────────────┐
+ │  BubbleSort  │  │   QuickSort  │
+ ├──────────────┤  ├──────────────┤
+ │ + sortProcess│  │ + sortProcess│
+ └──────────────┘  └──────────────┘
+
+
+              ┌─────────────────────┐
+              │       Sorter        │
+              ├─────────────────────┤
+              │ - sortingStrategy   │
+              ├─────────────────────┤
+              │ + setSortingStrategy│
+              │ + sortArray(int[])  │
+              └─────────────────────┘
+                       |
+                       | uses
+                       ▼
+                 SortingStrategy
+
+
+======================================================
+
+
+              ┌─────────────────────┐
+              │     ArrayUtil       │
+              ├─────────────────────┤
+              │ + swap(int[], i, j) │
+              │ + print(int[])      │
+              └─────────────────────┘
+
+
 // Strategy Interface
 // Defines a common contract for all sorting algorithms
 interface SortingStrategy {
